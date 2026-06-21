@@ -1,47 +1,65 @@
 # macOS MDM and Jamf Diagnostics Toolkit
 
-A read-only Bash toolkit for collecting macOS MDM enrolment, configuration-profile, Jamf, management-process, log, certificate, and connectivity evidence.
+A macOS support toolkit for diagnosing and repairing common MDM enrolment, managed-client and Jamf framework problems.
 
-## Checks performed
-
-- Automated Device Enrolment and MDM status
-- Bootstrap-token support and escrow state
-- Installed configuration-profile inventory
-- MDM client and profile service processes
-- Jamf binary discovery, version, policy state, and log evidence
-- Jamf launch daemons and framework files
-- APNs and device-management certificate indicators
-- Recent `mdmclient`, profiles, ManagedClient, and Jamf events
-- Optional Jamf server connectivity test
-- Text, CSV, and JSON reports
-
-## Usage
+## Diagnostic script
 
 ```bash
 chmod +x src/macos_mdm_jamf_diagnostics.sh
 sudo ./src/macos_mdm_jamf_diagnostics.sh
 ```
 
-Include the read-only Jamf connectivity check:
+Include the Jamf connectivity check:
 
 ```bash
 sudo ./src/macos_mdm_jamf_diagnostics.sh --test-connectivity --hours 48
 ```
 
-## Safety
+## Repair script
 
-The toolkit does not enrol or unenrol the Mac, renew profiles, run Jamf policies, submit inventory, rotate certificates, remove frameworks, or modify management settings.
+Preview service repair:
 
-## Privacy
+```bash
+chmod +x src/macos_mdm_jamf_repair.sh
+sudo ./src/macos_mdm_jamf_repair.sh --repair --dry-run
+```
 
-Reports may contain organisation names, profile identifiers, internal server names, usernames, device identifiers, and management URLs. Review output before sharing.
+Restart MDM and managed-client services:
 
-## Requirements
+```bash
+sudo ./src/macos_mdm_jamf_repair.sh --repair
+```
 
-- macOS 12 or later recommended
-- Bash 3.2+
-- Administrator privileges for complete profile and log evidence
-- Jamf is optional; the script handles systems where it is absent
+Renew MDM enrolment:
+
+```bash
+sudo ./src/macos_mdm_jamf_repair.sh --renew-enrollment
+```
+
+Submit Jamf inventory or run a custom policy event:
+
+```bash
+sudo ./src/macos_mdm_jamf_repair.sh --jamf-recon
+sudo ./src/macos_mdm_jamf_repair.sh --jamf-policy repair-event
+```
+
+Reapply Jamf management settings:
+
+```bash
+sudo ./src/macos_mdm_jamf_repair.sh --jamf-manage
+```
+
+## What the repair does
+
+- Restarts MDM, profiles and ManagedClient processes and launch services.
+- Can start Apple's supported enrolment-renewal workflow.
+- Can run Jamf inventory, management and one selected policy event.
+- Verifies enrolment, bootstrap-token indicators, management processes and Jamf connectivity after repair.
+- Supports confirmation prompts, dry-run, logs and clear exit codes.
+
+## Safety and privacy
+
+The tool does not unenrol the Mac, remove profiles, delete the Jamf framework or expose management credentials. Reports may contain organisation names, identifiers, server names and management URLs and should be reviewed before sharing.
 
 ## Author
 
